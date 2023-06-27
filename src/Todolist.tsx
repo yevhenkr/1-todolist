@@ -1,4 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react'
+
+type FilterValueType = 'All' | 'Active' | 'Completed'
 
 type TaskType = {
     id: number
@@ -9,9 +11,23 @@ type TaskType = {
 type PropsType = {
     title: string
     tasks: Array<TaskType>
+    removeTask: (index: number) => void
 }
 
 export function Todolist(props: PropsType) {
+    let [filter, setFilters] = useState('All')
+
+    let drushlack = props.tasks
+    const filterChange = (filter: FilterValueType) => {
+        setFilters(filter);
+    }
+    if (filter === 'Active') {
+        drushlack = props.tasks.filter(t => t.isDone === true)
+    }
+    if (filter === 'Completed') {
+        drushlack = props.tasks.filter(t => t.isDone === false)
+    }
+
     return <div>
         <h3>{props.title}</h3>
         <div>
@@ -19,14 +35,18 @@ export function Todolist(props: PropsType) {
             <button>+</button>
         </div>
         <ul>
-            <li><input type="checkbox" checked={props.tasks[0].isDone}/> <span>{props.tasks[0].title}</span></li>
-            <li><input type="checkbox" checked={props.tasks[1].isDone}/> <span>{props.tasks[1].title}</span></li>
-            <li><input type="checkbox" checked={props.tasks[2].isDone}/> <span>{props.tasks[2].title}</span></li>
+            {drushlack.map((el, index) => {
+                return <li key={el.id}>
+                    <input type="checkbox" checked={el.isDone}/>
+                    <span>{el.title}</span>
+                    <button onClick={() => props.removeTask(el.id)}>X</button>
+                </li>
+            })}
         </ul>
         <div>
-            <button>All</button>
-            <button>Active</button>
-            <button>Completed</button>
+            <button onClick={() => filterChange('All')}>All</button>
+            <button onClick={() => filterChange('Active')}>Active</button>
+            <button onClick={() => filterChange('Completed')}>Completed</button>
         </div>
     </div>
 }
