@@ -3,7 +3,7 @@ import {FilterValuesType} from './App';
 import {CheckBox} from './components/CheckBox';
 import s from './Todolist.module.css'
 
-type TaskType = {
+export type TaskType = {
     id: string
     title: string
     isDone: boolean
@@ -11,22 +11,23 @@ type TaskType = {
 
 type PropsType = {
     title: string
+    todoListID: string
     tasks: Array<TaskType>
-    removeTask: (taskId: string) => void
-    changeFilter: (value: FilterValuesType) => void
-    changeStatus: (tasksId: string, newStatus: boolean) => void
+    removeTask: (todoListID: string, taskId: string) => void
+    changeFilter: (todoListID: string, value: FilterValuesType) => void
+    changeStatus: (todoListID: string, tasksId: string, newStatus: boolean) => void
     filter: FilterValuesType
-    addTask: (title: string) => void
+    addTask: (todoListID: string, title: string) => void
+    removeTodoList: (todoListID: string) => void
 }
 
 export function Todolist(props: PropsType) {
-
     let [title, setTitle] = useState('')
     let [error, setError] = useState<string | null>(null)
 
     const addTask = () => {
         if (title.trim()) {
-            props.addTask(title.trim());
+            props.addTask(props.todoListID, title.trim());
             setTitle('');
             setError(null)
         } else {
@@ -46,11 +47,15 @@ export function Todolist(props: PropsType) {
         }
     }
     const buttonsHandler = (name: FilterValuesType) => {
-        props.changeFilter(name);
+        props.changeFilter(props.todoListID, name);
+    }
+    const removeTodoList = () => {
+        props.removeTodoList(props.todoListID)
     }
 
     return <div>
         <h3>{props.title}</h3>
+        <button onClick={removeTodoList}>X</button>
         <div>
             <input className={error ? s.error : ''}
                    value={title}
@@ -64,9 +69,9 @@ export function Todolist(props: PropsType) {
             {
                 props.tasks.map(t => {
 
-                    const onClickHandler = () => props.removeTask(t.id)
+                    const onClickHandler = () => props.removeTask(props.todoListID, t.id)
                     const checkBoxHandler = (newStatus: boolean) => {
-                        props.changeStatus(t.id, newStatus)
+                        props.changeStatus(props.todoListID, t.id, newStatus)
                     }
 
                     return <li className={t.isDone ? s.isDone : ''} key={t.id}>
