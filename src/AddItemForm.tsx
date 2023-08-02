@@ -1,4 +1,7 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
+import {Button, TextField} from "@mui/material";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+
 
 type AddItemFormPropsType = {
     addItem: (title: string) => void
@@ -6,15 +9,15 @@ type AddItemFormPropsType = {
 
 export function AddItemForm(props: AddItemFormPropsType) {
 
-    let [title, setTitle] = useState("")
-    let [error, setError] = useState<string | null>(null)
+    const [title, setTitle] = useState("")
+    const [error, setError] = useState<boolean>(false)
 
     const addItem = () => {
         if (title.trim() !== "") {
             props.addItem(title);
             setTitle("");
         } else {
-            setError("Title is required");
+            setError(true);
         }
     }
 
@@ -23,20 +26,37 @@ export function AddItemForm(props: AddItemFormPropsType) {
     }
 
     const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        setError(null);
+        setError(false);
         if (e.charCode === 13) {
             addItem();
         }
     }
 
-    return <div>
-        <input value={title}
-               onChange={onChangeHandler}
-               onKeyPress={onKeyPressHandler}
-               className={error ? "error" : ""}
-        />
-        <button onClick={addItem}>+</button>
+    return <div style={{
+        display: "flex",
+        alignItems: "flex-start",
 
-        {error && <div className="error-message">{error}</div>}
+    }}>
+        <TextField
+            sx={{mr: "5px"}}
+            variant={"outlined"}
+            size={'small'}
+            value={title}
+            onChange={onChangeHandler}
+            onKeyPress={onKeyPressHandler}
+            className={error ? "error" : ""}
+            error={error}
+            helperText={error ? "Please, enter title" : undefined}
+        />
+        <Button
+            size={"small"}
+            variant={"contained"}
+            color={"primary"}
+            onClick={addItem}
+            sx={{mt: "3px"}}
+        >
+            <AddCircleOutlineIcon/>
+        </Button>
+
     </div>
 }
