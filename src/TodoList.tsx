@@ -2,15 +2,10 @@ import React, {ChangeEvent} from 'react';
 import {FilterValuesType} from './App';
 import {AddItemForm} from './AddItemForm';
 import {EditableSpan} from './EditableSpan';
-import {
-    Button,
-    Checkbox,
-    IconButton,
-    List,
-    ListItem,
-    Typography
-} from "@mui/material";
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import IconButton from '@mui/material/IconButton/IconButton';
+import {Delete} from '@mui/icons-material';
+import {Button, Checkbox} from '@mui/material';
+
 
 export type TaskType = {
     id: string
@@ -44,26 +39,18 @@ export function Todolist(props: PropsType) {
         props.changeTodolistTitle(props.id, title);
     }
 
-    const onAllClickHandler = () => props.changeFilter("all", props.id);
-    const onActiveClickHandler = () => props.changeFilter("active", props.id);
-    const onCompletedClickHandler = () => props.changeFilter("completed", props.id);
+    const onAllClickHandler = () => props.changeFilter('all', props.id);
+    const onActiveClickHandler = () => props.changeFilter('active', props.id);
+    const onCompletedClickHandler = () => props.changeFilter('completed', props.id);
 
     return <div>
-        <Typography
-            align={"center"}
-            variant={"h5"}
-            gutterBottom
-            sx={{fontWeight: "bold"}}
-        >
-            <EditableSpan value={props.title} onChange={changeTodolistTitle} />
-            <IconButton
-                size={"small"}
-                onClick={removeTodolist}>
-                <DeleteForeverIcon/>
+        <h3><EditableSpan value={props.title} onChange={changeTodolistTitle}/>
+            <IconButton onClick={removeTodolist}>
+                <Delete/>
             </IconButton>
-        </Typography>
+        </h3>
         <AddItemForm addItem={addTask}/>
-        <List>
+        <div>
             {
                 props.tasks.map(t => {
                     const onClickHandler = () => props.removeTask(t.id, props.id)
@@ -76,49 +63,34 @@ export function Todolist(props: PropsType) {
                     }
 
 
-                    return <ListItem
-                        sx={{p: "0 30px"}}
-                        key={t.id}
-                        className={t.isDone ? "is-done" : ""}>
+                    return <div key={t.id} className={t.isDone ? 'is-done' : ''}>
                         <Checkbox
-                            size={"small"}
-                            color={"primary"}
-                            onChange={onChangeHandler}
                             checked={t.isDone}
+                            color="primary"
+                            onChange={onChangeHandler}
                         />
-                        <EditableSpan value={t.title} onChange={onTitleChangeHandler} />
-                        <IconButton
-                            size={"small"}
-                            onClick={onClickHandler}>
-                            <DeleteForeverIcon/>
+
+                        <EditableSpan value={t.title} onChange={onTitleChangeHandler}/>
+                        <IconButton onClick={onClickHandler}>
+                            <Delete/>
                         </IconButton>
-                    </ListItem>
+                    </div>
                 })
             }
-        </List>
-        <div style={{display: "flex", justifyContent: "space-around"}}>
-            <Button
-                sx={{mr: "2px"}}
-                variant={"contained"}
-                size={"small"}
-                color={props.filter === 'all' ? "secondary" : "primary"}
-                disableElevation
-                onClick={onAllClickHandler}>All
+        </div>
+        <div>
+            <Button variant={props.filter === 'all' ? 'outlined' : 'text'}
+                    onClick={onAllClickHandler}
+                    color={'inherit'}
+            >All
             </Button>
-            <Button
-                sx={{mr: "2px"}}
-                variant={"contained"}
-                size={"small"}
-                color={props.filter === 'active' ? "secondary" : "primary"}
-                disableElevation
-                onClick={onActiveClickHandler}>Active
+            <Button variant={props.filter === 'active' ? 'outlined' : 'text'}
+                    onClick={onActiveClickHandler}
+                    color={'primary'}>Active
             </Button>
-            <Button
-                variant={"contained"}
-                size={"small"}
-                color={props.filter === 'completed' ? "secondary" : "primary"}
-                disableElevation
-                onClick={onCompletedClickHandler}>Completed
+            <Button variant={props.filter === 'completed' ? 'outlined' : 'text'}
+                    onClick={onCompletedClickHandler}
+                    color={'secondary'}>Completed
             </Button>
         </div>
     </div>

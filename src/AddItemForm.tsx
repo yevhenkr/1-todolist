@@ -1,6 +1,6 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
-import {Button, TextField} from "@mui/material";
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import {IconButton, TextField} from '@mui/material';
+import {AddBox} from '@mui/icons-material';
 
 
 type AddItemFormPropsType = {
@@ -9,15 +9,15 @@ type AddItemFormPropsType = {
 
 export function AddItemForm(props: AddItemFormPropsType) {
 
-    const [title, setTitle] = useState("")
-    const [error, setError] = useState<boolean>(false)
+    const [title, setTitle] = useState('')
+    let [error, setError] = useState<string | null>(null)
 
     const addItem = () => {
-        if (title.trim() !== "") {
+        if (title.trim() !== '') {
             props.addItem(title);
-            setTitle("");
+            setTitle('');
         } else {
-            setError(true);
+            setError('Title is required');
         }
     }
 
@@ -26,37 +26,23 @@ export function AddItemForm(props: AddItemFormPropsType) {
     }
 
     const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        setError(false);
+        setError(null);
         if (e.charCode === 13) {
             addItem();
         }
     }
 
-    return <div style={{
-        display: "flex",
-        alignItems: "flex-start",
-
-    }}>
-        <TextField
-            sx={{mr: "5px"}}
-            variant={"outlined"}
-            size={'small'}
-            value={title}
-            onChange={onChangeHandler}
-            onKeyPress={onKeyPressHandler}
-            className={error ? "error" : ""}
-            error={error}
-            helperText={error ? "Please, enter title" : undefined}
+    return <div>
+        <TextField variant="outlined"
+                   error={!!error}
+                   value={title}
+                   onChange={onChangeHandler}
+                   onKeyPress={onKeyPressHandler}
+                   label="Title"
+                   helperText={error}
         />
-        <Button
-            size={"small"}
-            variant={"contained"}
-            color={"primary"}
-            onClick={addItem}
-            sx={{mt: "3px"}}
-        >
-            <AddCircleOutlineIcon/>
-        </Button>
-
+        <IconButton color="primary" onClick={addItem}>
+            <AddBox/>
+        </IconButton>
     </div>
 }
