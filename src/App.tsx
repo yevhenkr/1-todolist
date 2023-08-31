@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import './App.css';
-import {TaskType, Todolist} from './Todolist';
+import {TaskType, Todolist} from './TodoList';
 import {v1} from 'uuid';
 import {AddItemForm} from './AddItemForm';
 import AppBar from '@mui/material/AppBar/AppBar';
