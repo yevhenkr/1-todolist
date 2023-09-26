@@ -1,7 +1,13 @@
-import { TasksStateType } from '../App';
-import { v1 } from 'uuid';
-import { AddTodolistActionType, RemoveTodolistActionType } from './todolists-reducer';
-import { TaskPriorities, TaskStatuses, TaskType } from '../api/todolists-api'
+import {TasksStateType} from '../App';
+import {v1} from 'uuid';
+import {
+    AddTodolistActionType,
+    RemoveTodolistActionType,
+    SetTodolistsActionType
+} from './todolists-reducer';
+import {TaskPriorities, TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelType} from '../api/todolists-api'
+import {Dispatch} from "redux";
+import {AppRootStateType} from "./store";
 
 export type RemoveTaskActionType = {
     type: 'REMOVE-TASK',
@@ -29,11 +35,21 @@ export type ChangeTaskTitleActionType = {
     title: string
 }
 
+export type _SetTasksActionType = {
+    type: "SET-TASKS"
+    tasks: Array<TaskType>
+    todolistId: string
+}
+
 type ActionsType = RemoveTaskActionType | AddTaskActionType
     | ChangeTaskStatusActionType
     | ChangeTaskTitleActionType
     | AddTodolistActionType
     | RemoveTodolistActionType
+    | SetTodolistsActionType
+    | _SetTasksActionType
+    | ReturnType<typeof setTasksAC>
+
 
 const initialState: TasksStateType = {
     /*"todolistId1": [
@@ -57,6 +73,12 @@ const initialState: TasksStateType = {
 
 export const tasksReducer = (state: TasksStateType = initialState, action: ActionsType): TasksStateType => {
     switch (action.type) {
+        case "SET_TASKS": {
+            return {
+                ...state,
+                [action.toDoId]: action.tasks
+            }
+        }
         case 'REMOVE-TASK': {
             const stateCopy = {...state}
             const tasks = stateCopy[action.todolistId];
@@ -106,6 +128,19 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Actio
             delete copyState[action.id];
             return copyState;
         }
+        case 'SET-TODOLISTS': {
+            const stateCopy = {...state}
+            action.todolists.forEach((tl) => {
+                stateCopy[tl.id] = []
+            })
+            return stateCopy;
+        }
+        case 'SET-TASKS': {
+            const stateCopy = {...state}
+            stateCopy[action.todolistId] = action.tasks
+            return stateCopy
+        }
+
         default:
             return state;
     }
@@ -124,3 +159,45 @@ export const changeTaskTitleAC = (taskId: string, title: string, todolistId: str
     return {type: 'CHANGE-TASK-TITLE', title, todolistId, taskId}
 }
 
+export const setTasksAC = (tasks: TaskType[], toDoId: string) => ({type: "SET_TASKS", tasks, toDoId} as const)
+
+export const getTasksTC = (toDoListID: string) => (dispatch: Dispatch) => {
+    todolistsAPI.getTasks(toDoListID)//DAL уровен
+        .then((res) => {
+            res.data
+            dispatch(setTasksAC(res.data.items, toDoListID))
+        })
+}
+
+export const deleteTaskTC = (toDoListID: string, taskId: string) => (dispatch: Dispatch) => {
+    todolistsAPI.deleteTask(toDoListID, taskId)//DAL уровен
+        .then((res) => {
+            res.data
+            dispatch(removeTaskAC(taskId, toDoListID))
+        })
+}
+
+export const createTaskTC = (toDoListID: string, title: string) => (dispatch: Dispatch) => {
+    todolistsAPI.createTask(toDoListID, title)//DAL уровен
+        .then((res) => {
+            res.data
+            dispatch(addTaskAC(title, toDoListID))
+        })
+}
+export const updateTaskTC = (toDoListID: string, taskId: string, status: TaskStatuses) => (dispatch: Dispatch, getState: () => AppRootStateType) => {
+    const task = getState().tasks[toDoListID].find(task => task.id === taskId)
+    if (task) {
+        const model: UpdateTaskModelType = {
+            title: task.title,
+            deadline: task.deadline,
+            description: task.description,
+            priority: task.priority,
+            startDate: task.startDate,
+            status
+        }
+        todolistsAPI.updateTask(toDoListID, taskId, model)//DAL уровен
+            .then((res) => {
+                dispatch(changeTaskStatusAC(taskId, status, toDoListID))
+            })
+    }
+}
