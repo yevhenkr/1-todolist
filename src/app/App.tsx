@@ -12,7 +12,7 @@ export const App = () => {
         <div>
             <List item={["hyml", "frfr"]} renderItem={(item) => item.toUpperCase()}/>
             <List item={[1.4, 2.5, 3]} renderItem={(item) => item.toFixed()}/>
-            <List item={[{name: "Mikola"}]} renderItem={(item) => item.name()}/>
+            <List item={[{name: "Mikola"}]} renderItem={(item) => item.name}/>
             {appStatus === "loading" && <LinearLoader/>}
             <Decks/>
             <GlobalError/>
