@@ -25,14 +25,6 @@ type PropsType = {
 export const Todolist = React.memo(function ({ demo = false, ...props }: PropsType) {
   const dispatch = useAppDispatch()
 
-  useEffect(() => {
-    if (demo) {
-      return
-    }
-    const thunk = fetchTasksTC(props.todolist.id)
-    dispatch(thunk)
-  }, [])
-
   const addTask = useCallback(
     (title: string) => {
       props.addTask(title, props.todolist.id)
@@ -82,7 +74,7 @@ export const Todolist = React.memo(function ({ demo = false, ...props }: PropsTy
       </h3>
       <AddItemForm addItem={addTask} disabled={props.todolist.entityStatus === "loading"} />
       <div>
-        {tasksForTodolist.map((t) => (
+        {tasksForTodolist?.map((t) => (
           <Task
             key={t.id}
             task={t}
