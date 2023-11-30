@@ -3,11 +3,11 @@ import { Delete } from "@mui/icons-material";
 import { Button, IconButton } from "@mui/material";
 import { Task } from "./Task/Task";
 import { FilterValuesType, TodolistDomainType } from "features/TodolistsList/todolists.reducer";
-import { tasksThunks } from "features/TodolistsList/tasks.reducer";
 import { TaskType } from "features/TodolistsList/todolists.api";
 import { TaskStatuses } from "common/enums";
 import { useAppDispatch } from "common/hooks";
 import { AddItemForm, EditableSpan } from "common/components";
+import {tasksActions} from "../index";
 
 type PropsType = {
   todolist: TodolistDomainType;
@@ -25,7 +25,7 @@ export const Todolist = React.memo(function (props: PropsType) {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(tasksThunks.fetchTasks(props.todolist.id));
+    dispatch(tasksActions.fetchTasksTC(props.todolist.id));
   }, []);
 
   const addTask = useCallback(
