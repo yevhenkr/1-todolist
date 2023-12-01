@@ -87,7 +87,7 @@ beforeEach(() => {
 
 test("correct task should be deleted from correct array", () => {
   const args = { taskId: "2", todolistId: "todolistId2" };
-  const action = tasksActions.removeTaskTC.fulfilled(args, "requestId", args);
+  const action = tasksActions.removeTask.fulfilled(args, "requestId", args);
 
   const endState = tasksReducer(startState, action);
 
@@ -112,7 +112,7 @@ test("correct task should be added to correct array", () => {
     id: "id exists",
   };
 
-  const action = tasksActions.addTaskTC.fulfilled({ task }, "requestId", {
+  const action = tasksActions.addTask.fulfilled({ task }, "requestId", {
     title: task.title,
     todolistId: task.todoListId,
   });
@@ -128,7 +128,7 @@ test("correct task should be added to correct array", () => {
 
 test("status of specified task should be changed", () => {
   const args = { taskId: "2", domainModel: { status: TaskStatuses.New }, todolistId: "todolistId2" };
-  const action = tasksActions.updateTaskTC.fulfilled(args, "requestId", args);
+  const action = tasksActions.updateTask.fulfilled(args, "requestId", args);
 
   const endState = tasksReducer(startState, action);
 
@@ -138,7 +138,7 @@ test("status of specified task should be changed", () => {
 
 test("title of specified task should be changed", () => {
   const args = { taskId: "2", domainModel: { title: "yogurt" }, todolistId: "todolistId2" };
-  const action = tasksActions.updateTaskTC.fulfilled(args, "requestId", args);
+  const action = tasksActions.updateTask.fulfilled(args, "requestId", args);
 
   const endState = tasksReducer(startState, action);
 
@@ -202,7 +202,7 @@ test("empty arrays should be added when we set todolists", () => {
 });
 
 test("tasks should be added for todolist", () => {
-  const action = tasksActions.fetchTasksTC.fulfilled(
+  const action = tasksActions.fetchTasks.fulfilled(
     {
       tasks: startState["todolistId1"],
       todolistId: "todolistId1",
