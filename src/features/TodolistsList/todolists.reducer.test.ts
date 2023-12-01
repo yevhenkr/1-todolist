@@ -5,9 +5,9 @@ import {
   todolistsReducer,
   todolistsThunks,
 } from "features/TodolistsList/todolists.reducer";
-import {v1} from "uuid";
-import {RequestStatusType} from "app/app.reducer";
-import {TodolistType} from "./todolists.api";
+import { v1 } from "uuid";
+import { RequestStatusType } from "app/app.reducer";
+import { TodolistType } from "./todolists.api";
 
 let todolistId1: string;
 let todolistId2: string;
@@ -55,7 +55,7 @@ test("correct todolist should change its name", () => {
 
   const args = { id: todolistId2, title: newTodolistTitle };
 
-  const action = todolistsThunks.changeTodolistTitleTC.fulfilled(args, "requestId", args);
+  const action = todolistsThunks.changeTodolistTitle.fulfilled(args, "requestId", args);
 
   const endState = todolistsReducer(startState, action);
 
